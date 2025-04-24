@@ -287,7 +287,7 @@ class BaseTrainer:
                             x['momentum'] = np.interp(ni, xi, [self.args.warmup_momentum, self.args.momentum])
 
                 # Forward
-                with torch.amp.autocast(self.amp):
+                with torch.amp.autocast(device_type='cuda', enabled=self.amp):
                     batch = self.preprocess_batch(batch)
                     preds = self.model(batch["img"])
                     self.loss, self.loss_items = self.criterion(preds, batch)
