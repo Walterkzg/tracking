@@ -300,7 +300,7 @@ def attempt_load_weights(weights, device=None, inplace=True, fuse=False):
 
     model = Ensemble()
     for w in weights if isinstance(weights, list) else [weights]:
-        ckpt = torch.load(attempt_download(w), map_location='cpu')  # load
+        ckpt = torch.load(attempt_download(w), map_location='cpu',weights_only=True)  # load
         args = {**DEFAULT_CONFIG_DICT, **ckpt['train_args']}  # combine model and default args, preferring model args
         ckpt = (ckpt.get('ema') or ckpt['model']).to(device).float()  # FP32 model
 
@@ -338,7 +338,7 @@ def attempt_load_one_weight(weight, device=None, inplace=True, fuse=False):
     # Loads a single model weights
     from ultralytics.yolo.utils.downloads import attempt_download
 
-    ckpt = torch.load(attempt_download(weight), map_location='cpu')  # load
+    ckpt = torch.load(attempt_download(weight), map_location='cpu',weight_only=False)  # load
     args = {**DEFAULT_CONFIG_DICT, **ckpt['train_args']}  # combine model and default args, preferring model args
     model = (ckpt.get('ema') or ckpt['model']).to(device).float()  # FP32 model
 
