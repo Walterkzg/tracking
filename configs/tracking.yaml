@@ -1,0 +1,21 @@
+# 跟踪器选择（内置botsort/bytetrack）
+tracker_type: "bytetrack"  
+
+# 轨迹设置
+max_trail_length: 50       # 轨迹最大长度（帧数）
+trail_color: [0, 0, 255]   # BGR轨迹颜色
+
+# 检测参数
+conf_threshold: 0.4        # 置信度阈值
+iou_threshold: 0.5         # IOU阈值
+classes:                   # COCO类别过滤
+  vehicles: [2, 3, 5, 7]   # car/motorcycle/bus/truck
+  persons: [0]             # 可选行人检测
+
+# 可视化设置
+visualization:
+  show_conf: True      # 是否显示置信度
+  show_ids: True       # 是否显示ID
+  box_thickness: 2     # 框线粗细
+  trail_color: [0,0,255] # 轨迹颜色(BGR)
+  max_trail_points: 30 # 最大轨迹点数
