@@ -1,0 +1,14 @@
+names:
+- boat
+- camping car
+- car
+- motorcycle
+- other
+- pickup
+- plane
+- tractor
+- truck
+- van
+nc: 10
+train: detection-1/train/images
+val: detection-1/valid/images
