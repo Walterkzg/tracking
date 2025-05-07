@@ -1,0 +1,29 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100 card-hover">
+            <div class="card-body text-center">
+                <h5 class="card-title">Video Processing</h5>
+                <p class="card-text">Upload vehicle video for tracking and trajectory generation</p>
+                <a href="{{ url_for('video_processing') }}" class="btn btn-primary">
+                    Go to Video Processing
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 card-hover">
+            <div class="card-body text-center">
+                <h5 class="card-title">Image Processing</h5>
+                <p class="card-text">Upload vehicle image for detection and analysis</p>
+                <a href="{{ url_for('image_processing') }}" class="btn btn-primary">
+                    Go to Image Processing
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,13 @@ from src.tracker.yolov8_tracker import YOLOv8Tracker
 from src.utils.visualization import draw_detections, draw_trails
 from src.utils.video_utils import VideoHandler
 from configs import load_config  # 现在可以正确导入了
+import argparse
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input', type=str, help='Input video path')
+    parser.add_argument('--output', type=str, help='Output video path')
+    return parser.parse_args()
 def main():
     # 加载配置
     config = load_config("D:\\vscode\\ai-project\\Vehicle-Tracking\\configs\\tracking.yaml")
@@ -55,4 +61,10 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    args = parse_args()
+    # 修改VideoHandler的路径为参数传入的路径
+    video = VideoHandler(
+        input_path=args.input,
+        output_path=args.output
+    )
     main()

@@ -1,0 +1,39 @@
+<!-- templates/video_processing.html 交互增强 -->
+{% block content %}
+<div class="card border-0 shadow-lg">
+    <div class="card-header bg-white border-0 py-3">
+        <h4 class="mb-0 d-flex align-items-center">
+            <i class="fas fa-video me-2 text-primary"></i>
+            Video Processing
+        </h4>
+    </div>
+    <div class="card-body">
+        <form ...>
+            <div class="upload-box position-relative" 
+                 id="dropZone"
+                 ondragover="handleDragOver(event)"
+                 ondrop="handleDrop(event)">
+                <div class="mb-3">
+                    <input type="file" ...>
+                </div>
+                <div class="text-muted small">
+                    <i class="fas fa-cloud-upload-alt me-1"></i>
+                    Drag & drop files or click to upload
+                </div>
+                <div class="progress-bar mt-3">
+                    <div class="progress-fill" id="uploadProgress"></div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+                <i class="fas fa-magic me-2"></i>
+                Start Processing
+            </button>
+        </form>
+
+        <div class="processing-result mt-5 animate__animated animate__fadeIn">
+            <!-- 新增动画效果 -->
+        </div>
+    </div>
+</div>
+{% endblock %}
