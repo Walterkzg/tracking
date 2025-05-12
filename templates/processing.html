@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="alert alert-info">
+    <h4>视频处理中...</h4>
+    <div class="spinner-border"></div>
+    <p id="countdown">预计剩余时间：30秒</p>
+</div>
+<script>
+    // 自动刷新检测结果
+    setTimeout(function(){
+        window.location.reload();
+    }, 5000); // 每5秒刷新一次
+</script>
+{% endblock %}

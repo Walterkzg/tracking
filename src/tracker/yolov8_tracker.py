@@ -19,9 +19,14 @@ class YOLOv8Tracker(BaseTracker):
         )
         
         # 提取跟踪结果
-        if results[0].boxes.id is not None:
+        if (results[0].boxes.id is not None) and (len(results[0].boxes.id) > 0):
             boxes = results[0].boxes.xywh.cpu()
             track_ids = results[0].boxes.id.int().cpu().tolist()
+            
+            # 确保boxes和track_ids长度一致
+            if len(boxes) != len(track_ids):
+                print(f"[WARNING] 检测框数量({len(boxes)})与ID数量({len(track_ids)})不匹配，跳过此帧")
+                return results
             
             # 更新每个目标的轨迹
             for box, track_id in zip(boxes, track_ids):

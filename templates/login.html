@@ -1,53 +1,22 @@
-<!-- templates/login.html 升级版 -->
 {% extends "base.html" %}
-
 {% block content %}
-<div class="row justify-content-center vh-80 align-items-center">
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-transparent text-center py-4">
-                <img src="{{ url_for('static', filename='images/logo.svg') }}" 
-                     alt="Logo" 
-                     class="mb-3"
-                     style="height: 50px;">
-                <h3 class="mb-0 text-primary">Vehicle Tracking System</h3>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">用户登录</h2>
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">用户名</label>
+                <input type="text" name="username" class="form-control" required>
             </div>
-            <div class="card-body px-5 py-4">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-user"></i>
-                            </span>
-                            <input type="text" 
-                                   name="username" 
-                                   class="form-control form-control-lg"
-                                   placeholder="Enter your username">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label text-muted small mb-1">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-lock"></i>
-                            </span>
-                            <input type="password" 
-                                   name="password" 
-                                   class="form-control form-control-lg"
-                                   placeholder="••••••••">
-                        </div>
-                    </div>
-
-                    <button type="submit" 
-                            class="btn btn-lg btn-primary w-100 d-flex align-items-center justify-content-center">
-                        <span class="me-2">Sign In</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </form>
+            <div class="mb-3">
+                <label class="form-label">密码</label>
+                <input type="password" name="password" class="form-control" required>
             </div>
-        </div>
+            <button type="submit" class="btn btn-primary">登录</button>
+        </form>
     </div>
 </div>
 {% endblock %}

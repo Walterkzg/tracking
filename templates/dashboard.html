@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h1 class="mb-4">主菜单</h1>
+        <div class="d-grid gap-3">
+            <a href="{{ url_for('video_processing') }}" class="btn btn-lg btn-primary">
+                视频处理
+            </a>
+            <button class="btn btn-lg btn-secondary" disabled>
+                图片处理（开发中）
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
