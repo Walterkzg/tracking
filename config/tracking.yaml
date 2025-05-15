@@ -1,0 +1,9 @@
+# config/tracking.yaml
+project: output
+name: default
+source: input.mp4
+model: best.pt
+save: True
+line:
+  - [100, 500]
+  - [1050, 500]

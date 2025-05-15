@@ -5,10 +5,10 @@ task: "detect" # choices=['detect', 'segment', 'classify', 'init'] # init is a s
 mode: "train" # choices=['train', 'val', 'predict'] # mode to run task in.
 
 # Train settings -------------------------------------------------------------------------------------------------------
-model: null # i.e. yolov8n.pt, yolov8n.yaml. Path to model file
+model: "D:\\software\\LocalProjects\\VehicleTracking\\ultralytics\\yolo\\v8\\detect\\best.pt" # i.e. yolov8n.pt, yolov8n.yaml. Path to model file
 data: null # i.e. coco128.yaml. Path to data file
 epochs: 100 # number of epochs to train for
-patience: 50  # TODO: epochs to wait for no observable improvement for early stopping of training
+patience: 50 # TODO: epochs to wait for no observable improvement for early stopping of training
 batch: 16 # number of images per batch
 imgsz: 640 # size of input images
 save: True # save checkpoints
@@ -19,7 +19,7 @@ project: null # project name
 name: null # experiment name
 exist_ok: False # whether to overwrite existing experiment
 pretrained: False # whether to use a pretrained model
-optimizer: 'SGD' # optimizer to use, choices=['SGD', 'Adam', 'AdamW', 'RMSProp']
+optimizer: "SGD" # optimizer to use, choices=['SGD', 'Adam', 'AdamW', 'RMSProp']
 verbose: False # whether to print verbose output
 seed: 0 # random seed for reproducibility
 deterministic: True # whether to enable deterministic mode
@@ -33,7 +33,7 @@ resume: False # resume training from last checkpoint
 overlap_mask: True # masks should overlap during training
 mask_ratio: 4 # mask downsample ratio
 # Classification
-dropout: 0.0  # use dropout regularization
+dropout: 0.0 # use dropout regularization
 
 # Val/Test settings ----------------------------------------------------------------------------------------------------
 val: True # validate/test during training
@@ -63,48 +63,48 @@ retina_masks: False # use retina masks for object detection
 
 # Export settings ------------------------------------------------------------------------------------------------------
 format: torchscript # format to export to
-keras: False  # use Keras
-optimize: False  # TorchScript: optimize for mobile
-int8: False  # CoreML/TF INT8 quantization
-dynamic: False  # ONNX/TF/TensorRT: dynamic axes
-simplify: False  # ONNX: simplify model
-opset: 17  # ONNX: opset version
-workspace: 4  # TensorRT: workspace size (GB)
-nms: False  # CoreML: add NMS
+keras: False # use Keras
+optimize: False # TorchScript: optimize for mobile
+int8: False # CoreML/TF INT8 quantization
+dynamic: False # ONNX/TF/TensorRT: dynamic axes
+simplify: False # ONNX: simplify model
+opset: 17 # ONNX: opset version
+workspace: 4 # TensorRT: workspace size (GB)
+nms: False # CoreML: add NMS
 
 # Hyperparameters ------------------------------------------------------------------------------------------------------
-lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3)
-lrf: 0.01  # final OneCycleLR learning rate (lr0 * lrf)
-momentum: 0.937  # SGD momentum/Adam beta1
-weight_decay: 0.0005  # optimizer weight decay 5e-4
-warmup_epochs: 3.0  # warmup epochs (fractions ok)
-warmup_momentum: 0.8  # warmup initial momentum
-warmup_bias_lr: 0.1  # warmup initial bias lr
-box: 7.5  # box loss gain
-cls: 0.5  # cls loss gain (scale with pixels)
-dfl: 1.5  # dfl loss gain
-fl_gamma: 0.0  # focal loss gamma (efficientDet default gamma=1.5)
+lr0: 0.01 # initial learning rate (SGD=1E-2, Adam=1E-3)
+lrf: 0.01 # final OneCycleLR learning rate (lr0 * lrf)
+momentum: 0.937 # SGD momentum/Adam beta1
+weight_decay: 0.0005 # optimizer weight decay 5e-4
+warmup_epochs: 3.0 # warmup epochs (fractions ok)
+warmup_momentum: 0.8 # warmup initial momentum
+warmup_bias_lr: 0.1 # warmup initial bias lr
+box: 7.5 # box loss gain
+cls: 0.5 # cls loss gain (scale with pixels)
+dfl: 1.5 # dfl loss gain
+fl_gamma: 0.0 # focal loss gamma (efficientDet default gamma=1.5)
 label_smoothing: 0.0
-nbs: 64  # nominal batch size
-hsv_h: 0.015  # image HSV-Hue augmentation (fraction)
-hsv_s: 0.7  # image HSV-Saturation augmentation (fraction)
-hsv_v: 0.4  # image HSV-Value augmentation (fraction)
-degrees: 0.0  # image rotation (+/- deg)
-translate: 0.1  # image translation (+/- fraction)
-scale: 0.5  # image scale (+/- gain)
-shear: 0.0  # image shear (+/- deg)
-perspective: 0.0  # image perspective (+/- fraction), range 0-0.001
-flipud: 0.0  # image flip up-down (probability)
-fliplr: 0.5  # image flip left-right (probability)
-mosaic: 1.0  # image mosaic (probability)
-mixup: 0.0  # image mixup (probability)
-copy_paste: 0.0  # segment copy-paste (probability)
+nbs: 64 # nominal batch size
+hsv_h: 0.015 # image HSV-Hue augmentation (fraction)
+hsv_s: 0.7 # image HSV-Saturation augmentation (fraction)
+hsv_v: 0.4 # image HSV-Value augmentation (fraction)
+degrees: 0.0 # image rotation (+/- deg)
+translate: 0.1 # image translation (+/- fraction)
+scale: 0.5 # image scale (+/- gain)
+shear: 0.0 # image shear (+/- deg)
+perspective: 0.0 # image perspective (+/- fraction), range 0-0.001
+flipud: 0.0 # image flip up-down (probability)
+fliplr: 0.5 # image flip left-right (probability)
+mosaic: 1.0 # image mosaic (probability)
+mixup: 0.0 # image mixup (probability)
+copy_paste: 0.0 # segment copy-paste (probability)
 
 # Hydra configs --------------------------------------------------------------------------------------------------------
 hydra:
-  output_subdir: null  # disable hydra directory creation
+  output_subdir: null # disable hydra directory creation
   run:
     dir: .
 
 # Debug, do not modify -------------------------------------------------------------------------------------------------
-v5loader: False  # use legacy YOLOv5 dataloader
+v5loader: False # use legacy YOLOv5 dataloader

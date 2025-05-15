@@ -308,13 +308,15 @@ class DetectionPredictor(BasePredictor):
 
 @hydra.main(version_base=None, config_path=str(DEFAULT_CONFIG.parent), config_name=DEFAULT_CONFIG.name)
 def predict(cfg):
+    print(f"Loaded model: {cfg.model}, Mode: {cfg.mode}")
     init_tracker()
-    cfg.model = cfg.model or "yolov8n.pt"
+    #cfg.model = cfg.model or "yolov8n.pt"
+    cfg.model = cfg.model 
     cfg.imgsz = check_imgsz(cfg.imgsz, min_dim=2)  # check image size
     cfg.source = cfg.source if cfg.source is not None else ROOT / "assets"
     predictor = DetectionPredictor(cfg)
     predictor()
 
-
 if __name__ == "__main__":
+    print("Loaded config file:", str(DEFAULT_CONFIG.parent), DEFAULT_CONFIG.name)  # 查看默认配置文件的绝对路径
     predict()

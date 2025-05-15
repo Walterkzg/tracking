@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>视频分析系统</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        .upload-box {
+            border: 2px dashed #ccc;
+            padding: 30px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>视频行为分析系统</h1>
+        <div class="upload-box">
+            <form method="post" enctype="multipart/form-data">
+                <h3>请上传模型和视频文件</h3>
+                <div>
+                    <label>模型文件 (.pt):</label><br>
+                    <input type="file" name="model" accept=".pt" required>
+                </div>
+                <div>
+                    <label>视频文件 (.mp4):</label><br>
+                    <input type="file" name="video" accept="video/mp4" required>
+                </div>
+                <button type="submit">开始分析</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

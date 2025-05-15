@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>处理状态</title>
+    <meta http-equiv="refresh" content="5">
+    <style>
+        .status-box {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            margin: 20px auto;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="status-box">
+        {% if ready %}
+        <h2>分析完成！</h2>
+        <a href="/download/{{ process_id }}" class="download-btn">下载结果视频</a>
+        {% else %}
+        <h2>正在分析视频...</h2>
+        <div class="spinner"></div>
+        <p>请勿关闭页面，分析完成后会自动刷新</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>
