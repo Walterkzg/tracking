@@ -1,49 +1,79 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>处理状态</title>
-    <meta http-equiv="refresh" content="5">
-    <style>
-        .status-box {
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
-        }
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">🚗 车辆分析进度 - {{ process_id[:8] }}</h3>
+        </div>
+        <div class="card-body">
+            <div id="progress-section">
+                <div class="progress mb-3" style="height: 25px;">
+                    <div id="progress-bar" class="progress-bar progress-bar-striped" role="progressbar"
+                        style="width: 0%">0%</div>
+                </div>
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            margin: 20px auto;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-info text-white">进入车辆</div>
+                            <ul id="enter-list" class="list-group list-group-flush"></ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">离开车辆</div>
+                            <ul id="exit-list" class="list-group list-group-flush"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="status-box">
-        {% if ready %}
-        <h2>分析完成！</h2>
-        <a href="/download/{{ process_id }}" class="download-btn">下载结果视频</a>
-        {% else %}
-        <h2>正在分析视频...</h2>
-        <div class="spinner"></div>
-        <p>请勿关闭页面，分析完成后会自动刷新</p>
-        {% endif %}
+            <div id="result-section" class="mt-4" style="display: none;">
+                <div class="alert alert-success">
+                    分析完成！<a href="{{ url_for('download', process_id=process_id) }}" class="alert-link">点击下载结果视频</a>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
+</div>
 
-</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const processId = "{{ process_id }}";
+        const updateProgress = () => {
+            fetch(`/progress/${processId}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 更新进度条
+                    const progressBar = document.getElementById('progress-bar');
+                    progressBar.style.width = `${data.progress}%`;
+                    progressBar.textContent = `${data.progress}%`;
+
+                    // 更新统计信息
+                    const updateList = (selector, items) => {
+                        const list = document.querySelector(selector);
+                        list.innerHTML = Object.entries(items)
+                            .map(([name, count]) => `
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>${name}</span>
+                                <span class="badge bg-primary rounded-pill">${count}</span>
+                            </li>
+                        `).join('');
+                    };
+
+                    updateList('#enter-list', data.counters.enter);
+                    updateList('#exit-list', data.counters.exit);
+
+                    // 处理完成显示结果
+                    if (data.ready) {
+                        document.getElementById('result-section').style.display = 'block';
+                    } else {
+                        setTimeout(updateProgress, 2000);
+                    }
+                });
+        };
+        updateProgress();
+    });
+</script>
+{% endblock %}

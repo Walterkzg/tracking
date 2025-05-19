@@ -1,44 +1,33 @@
-<!DOCTYPE html>
-<html>
+<!-- templates/upload.html -->
+{% extends "base.html" %}
 
-<head>
-    <title>视频分析系统</title>
-    <style>
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-        }
-
-        .upload-box {
-            border: 2px dashed #ccc;
-            padding: 30px;
-            text-align: center;
-        }
-
-        input[type="file"] {
-            margin: 20px 0;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1>视频行为分析系统</h1>
-        <div class="upload-box">
-            <form method="post" enctype="multipart/form-data">
-                <h3>请上传模型和视频文件</h3>
-                <div>
-                    <label>模型文件 (.pt):</label><br>
-                    <input type="file" name="model" accept=".pt" required>
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-cloud-upload"></i> 视频分析任务提交</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" class="dropzone" id="upload-form">
+                <div class="mb-4">
+                    <label class="form-label">选择模型文件 (.pt)</label>
+                    <input type="file" name="model" class="form-control" required accept=".pt">
                 </div>
-                <div>
-                    <label>视频文件 (.mp4):</label><br>
-                    <input type="file" name="video" accept="video/mp4" required>
+
+                <div class="mb-4">
+                    <label class="form-label">选择监控视频</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="video" class="form-control" required accept="video/*"
+                            onchange="previewVideo(this)">
+                        <div class="video-preview mt-3" id="video-preview"></div>
+                    </div>
                 </div>
-                <button type="submit">开始分析</button>
+
+                <button type="submit" class="btn btn-success btn-lg w-100">
+                    <i class="bi bi-play-circle"></i> 开始分析
+                </button>
             </form>
         </div>
     </div>
-</body>
-
-</html>
+</div>
+{% endblock %}

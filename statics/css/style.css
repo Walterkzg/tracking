@@ -1,0 +1,24 @@
+/* static/css/style.css */
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+.video-preview {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+#result-video {
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
