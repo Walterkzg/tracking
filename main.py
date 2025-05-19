@@ -37,6 +37,9 @@ def main(input_path, output_path, progress_callback=None, job_id=None):
             
         # 处理帧...
         results = tracker.update(frame)
+        
+        
+        
         # 显式检查Tensor的有效性
         if (results[0].boxes.id is not None) and (len(results[0].boxes.id)) > 0:
             track_ids = results[0].boxes.id.int().cpu().tolist()
