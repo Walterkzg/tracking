@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>检测结果展示</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f4f4;
+            padding: 40px;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        video {
+            margin-top: 20px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .btn-group {
+            margin-top: 20px;
+        }
+        a.button {
+            text-decoration: none;
+            padding: 12px 25px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 6px;
+            margin: 10px;
+            display: inline-block;
+        }
+        a.button:hover {
+            background-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>视频检测与跟踪已完成</h2>
+        <p>下方为处理后的目标检测视频，可直接播放</p>
+        <video controls autoplay>
+            <source src="{{ url_for('get_video', filename=filename) }}" type="video/mp4">
+            您的浏览器不支持 HTML5 视频播放。
+        </video>
+        <div class="btn-group">
+            <a class="button" href="{{ url_for('get_video', filename=filename) }}" download>下载结果视频</a>
+            <a class="button" href="{{ url_for('index') }}">返回首页</a>
+        </div>
+    </div>
+</body>
+</html>

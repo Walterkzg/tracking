@@ -121,7 +121,6 @@ def UI_box(x, img, color=None, label=None, line_thickness=None):
         cv2.putText(img, label, (c1[0], c1[1] - 2), 0, tl / 3, [225, 255, 255], thickness=tf, lineType=cv2.LINE_AA)
 
 
-
 def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
     #cv2.line(img, line[0], line[1], (46,162,112), 3)
 
@@ -139,7 +138,7 @@ def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
         y2 += offset[1]
 
         # code to find center of bottom edge
-        center = (int((x2+x1)/ 2), int((y2+y2)/2))
+        center = (int((x2+x1)/ 2), int((y2+y1)/2))
 
         # get ID of object
         id = int(identities[i]) if identities is not None else 0
@@ -167,6 +166,7 @@ def draw_boxes(img, bbox, names,object_id, identities=None, offset=(0, 0)):
 
 
 class DetectionPredictor(BasePredictor):
+
 
     def get_annotator(self, img):
         return Annotator(img, line_width=self.args.line_thickness, example=str(self.model.names))
@@ -239,7 +239,8 @@ class DetectionPredictor(BasePredictor):
             object_id = outputs[:, -1]
             
             draw_boxes(im0, bbox_xyxy, self.model.names, object_id,identities)
-
+        if hasattr(self, "writer"):
+            self.writer.write(im0)
         return log_string
 
 
