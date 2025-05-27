@@ -302,6 +302,14 @@ class DetectionPredictor(BasePredictor):
             object_id = outputs[:, -1]
             
             draw_boxes(im0, bbox_xyxy, self.model.names, object_id,identities)
+        # ✅ 保存每一帧的处理结果图像
+        #print(1)#调试语句
+        save_dir = Path("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/img0")  # 指定绝对路径
+        # 如果目录存在，则删除目录及其内容
+
+        save_dir.mkdir(parents=True, exist_ok=True) 
+        save_frame_path = save_dir / f"{p.stem}_{frame}.jpg"
+        cv2.imwrite(str(save_frame_path), im0)
 
         return log_string
 
@@ -320,3 +328,7 @@ def predict(cfg):
 if __name__ == "__main__":
     print("Loaded config file:", str(DEFAULT_CONFIG.parent), DEFAULT_CONFIG.name)  # 查看默认配置文件的绝对路径
     predict()
+    import shutil
+    save_dir = Path("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/img0")
+    if save_dir.exists():
+            shutil.rmtree(save_dir)

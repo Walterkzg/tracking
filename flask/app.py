@@ -1,3 +1,6 @@
+#conda activate gradio3.10 
+#cd /mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect
+#python /mnt/f/YOLOv8-DeepSORT-Object-Tracking/flask/app.py
 from flask import Flask, request, render_template, send_from_directory, redirect, url_for
 import os
 import shutil
@@ -11,15 +14,8 @@ app.config['UPLOAD_FOLDER'] = '/mnt/f/YOLOv8-DeepSORT-Object-Tracking/inputs'
 app.config['OUTPUT_FOLDER'] = '/mnt/f/YOLOv8-DeepSORT-Object-Tracking/runs/detect/train'
 app.config['MAX_CONTENT_LENGTH'] = 2000 * 1024 * 1024  # 2000 MB
 # 路径定义
-PREDICT_SCRIPT = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/predict_count.py"
-BEST_WEIGHTS = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/yolov8l.pt"
-
-#进度条代码
-
-import subprocess
-import re
-import sys
-progress_data = {"current": 0, "total": 1}
+PREDICT_SCRIPT = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/predict_count copy.py"
+BEST_WEIGHTS = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/best.pt"
 def run_detection(video_path):
     global progress_data
     command = [
@@ -31,20 +27,9 @@ def run_detection(video_path):
         f"+project={OUTPUT_FOLDER}"
     ]
 
-    process = subprocess.Popen(command,  shell=True,stdout=sys.stdout, stderr=sys.stderr)
-    pattern = r"video \d+/\d+ \((\d+)/(\d+)\)"
-
-    for line in process.stdout:
-        print(line.strip())
-        match = re.search(pattern, line)
-        if match:
-            progress_data["current"] = int(match.group(1))
-            progress_data["total"] = int(match.group(2))
-
-    process.wait()
-    progress_data = {"current": 0, "total": 1}
-
 from flask import jsonify
+
+
 
 @app.route("/progress")
 def progress():
@@ -116,13 +101,42 @@ def index():
 
             break
 
-
         if not output_video:
             return "未能找到处理后的视频文件", 500
 
-        return redirect(url_for("play_video", filename=output_video))
+        # 这里不要直接跳转播放视频，改跳转到展示中间图片页面
+        return redirect(url_for("show_images", filename=output_video))
 
     return render_template("index.html")
+
+#检查图片有没有生成
+@app.route("/check_images")
+def check_images():
+    image_folder = Path("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/img0")
+    images = list(image_folder.glob("*.jpg"))
+    return jsonify({"ready": len(images) >0})
+#Flask 路由展示这些图片
+@app.route("/img0/<path:filename>")
+def send_output_image(filename):
+    return send_from_directory("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/img0", filename)
+@app.route("/show_images")
+def show_images():
+    image_folder = Path("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/img0")
+    images = [f.name for f in sorted(image_folder.glob("*.jpg"))]
+    return render_template("show_images.html", images=images)
+@app.route("/get_images")
+def get_images():
+    image_folder = Path("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/img0")
+    images = sorted(f.name for f in image_folder.glob("*.jpg"))
+    return jsonify({"images": images})
+
+@app.route("/check_video")
+def check_video():
+    output_dir = Path("/mnt/f/YOLOv8-DeepSORT-Object-Tracking/runs/detect/train") 
+    for f in output_dir.glob("converted_*.mp4"):
+        return jsonify({"ready": True, "filename": f.name})
+    return jsonify({"ready": False})
+
 
 @app.route("/play/<filename>")
 def play_video(filename):

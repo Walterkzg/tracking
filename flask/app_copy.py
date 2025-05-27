@@ -1,3 +1,4 @@
+#cd /mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect
 from flask import Flask, request, render_template, send_from_directory, redirect, url_for
 import os
 import shutil
@@ -12,7 +13,7 @@ app.config['OUTPUT_FOLDER'] = '/mnt/f/YOLOv8-DeepSORT-Object-Tracking/runs/detec
 app.config['MAX_CONTENT_LENGTH'] = 2000 * 1024 * 1024  # 2000 MB
 # 路径定义
 PREDICT_SCRIPT = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/predict_count copy.py"
-BEST_WEIGHTS = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/best.pt"
+BEST_WEIGHTS = "/mnt/f/YOLOv8-DeepSORT-Object-Tracking/ultralytics/yolo/v8/detect/yolov8n.pt"
 def run_detection(video_path):
     global progress_data
     command = [
@@ -25,6 +26,7 @@ def run_detection(video_path):
     ]
 
 from flask import jsonify
+
 
 @app.route("/progress")
 def progress():

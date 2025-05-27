@@ -108,32 +108,25 @@
           <div id="progress-bar" style="width: 0%; height: 20px; background-color: #4CAF50; border-radius: 10px;"></div>
         </div>
       </div>
-      <script>
-        function startProgressPolling() {
-            document.getElementById("progress-container").style.display = "block";
-        
-            const interval = setInterval(() => {
-                fetch("/progress")
-                    .then(response => response.json())
-                    .then(data => {
-                        let percent = Math.floor((data.current / data.total) * 100);
-                        document.getElementById("progress-bar").style.width = percent + "%";
-                        document.getElementById("progress-text").innerText = 
-                            `处理帧数: ${data.current} / ${data.total} (${percent}%)`;
-                        
-                        if (percent >= 100) {
-                            clearInterval(interval);
-                        }
-                    });
-            }, 500); // 每 500ms 更新一次
-        }
-        </script>
-        
+
+<script>
+    setInterval(function () {
+        fetch("/check_images")
+        .then(res => res.json())
+        .then(data => {
+            if (data.ready) {
+                // 直接跳转到轮播图页面，不再依赖 filename
+                window.location.href = "/show_images";
+            }
+        });
+    }, 2000);  // 每 2 秒轮询一次
+</script>
+
+
     <script>
         function showLoader() {
             document.getElementById('upload-form').style.display = 'none';
-            document.getElementById('loading').style.display = 'none';
-            startProgressPolling();
+            document.getElementById('loading').style.display = 'block';
         }
     </script>
 </body>

@@ -1,0 +1,69 @@
+<body style="background-color: #1e1e1e; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding-top: 40px;">
+
+    <h2 style="margin-bottom: 20px;">🚗 正在进行目标检测，请稍候...</h2>
+
+    <img id="viewer" src="" style="max-width: 90%; border: 3px solid white; border-radius: 10px; display: none; display: block; margin: 0 auto;">
+
+    <script>
+    let images = [];
+    let currentIndex = 0;
+    const viewer = document.getElementById("viewer");
+    const spinner = document.getElementById("spinner");
+
+    // 保存 setInterval 的 ID
+    let imageInterval = setInterval(updateImagesAndShow, 500);
+    let checkVideoInterval = setInterval(checkFinalVideo, 1000);
+
+    function updateImagesAndShow() {
+        fetch("/get_images")
+            .then(res => res.json())
+            .then(data => {
+                if (!data.images || data.images.length === 0) return;
+
+                images = data.images;
+
+                // 第一次显示图像时，隐藏加载动画
+                if (viewer.style.display === "none" && images.length > 0) {
+                    viewer.style.display = "block";
+                    spinner.style.display = "none";
+                }
+
+                // 显示当前帧
+                if (viewer && images[currentIndex]) {
+                    viewer.src = `/img0/${images[currentIndex]}`;
+                    currentIndex = (currentIndex + 1) % images.length;
+                }
+            })
+            .catch(err => {
+                console.error("获取图片失败：", err);
+            });
+    }
+
+function checkFinalVideo() {
+    fetch("/check_video")
+        .then(res => res.json())
+        .then(data => {
+            console.log("check_video 返回：", data);
+            if (data.ready && data.filename) {
+                // 停止轮询
+                clearInterval(imageInterval);
+                clearInterval(checkVideoInterval);
+
+                // 清空轮播资源
+                viewer.src = "";
+                viewer.style.display = "none";
+                images = [];
+
+                // 跳转播放视频，带时间戳防止缓存
+                window.location.href = `/play/${data.filename}?t=${Date.now()}`;
+            }
+        })
+        .catch(err => {
+            console.error("检查视频失败：", err);
+        });
+}
+
+</script>
+
+
+</body>
