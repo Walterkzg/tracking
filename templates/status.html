@@ -1,79 +1,129 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">🚗 车辆分析进度 - {{ process_id[:8] }}</h3>
+<div class="status-container">
+    <div class="status-box" data-process-id="{{ process_id }}">
+        <!-- 视频分析状态区域 -->
+        <div class="analysis-header text-center mb-4">
+            {% if ready %}
+            <h2 class="text-success"><i class="bi bi-check-circle-fill"></i> 分析完成！</h2>
+            <a href="/download/{{ process_id }}" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-download"></i> 下载结果视频
+            </a>
+            {% else %}
+            <h2 class="text-primary"><i class="bi bi-hourglass-split"></i> 正在分析视频...</h2>
+            {% endif %}
         </div>
-        <div class="card-body">
-            <div id="progress-section">
-                <div class="progress mb-3" style="height: 25px;">
-                    <div id="progress-bar" class="progress-bar progress-bar-striped" role="progressbar"
-                        style="width: 0%">0%</div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card mb-3">
-                            <div class="card-header bg-info text-white">进入车辆</div>
-                            <ul id="enter-list" class="list-group list-group-flush"></ul>
-                        </div>
+        <!-- 视频流容器 -->
+        <div class="video-analysis-container">
+            <div class="video-wrapper">
+                <div id="video-stream-container">
+                    <div class="loading-state">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="mt-2">正在加载视频流...</p>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header bg-warning text-dark">离开车辆</div>
-                            <ul id="exit-list" class="list-group list-group-flush"></ul>
-                        </div>
-                    </div>
+                    <img id="video-feed" class="processed-frame" alt="实时分析画面">
                 </div>
             </div>
 
-            <div id="result-section" class="mt-4" style="display: none;">
-                <div class="alert alert-success">
-                    分析完成！<a href="{{ url_for('download', process_id=process_id) }}" class="alert-link">点击下载结果视频</a>
+            <!-- 分析信息面板 -->
+            <div class="analysis-panel">
+                <div class="progress-info">
+                    <h5><i class="bi bi-speedometer2"></i> 分析进度</h5>
+                    <div class="progress">
+                        <div id="analysis-progress" class="progress-bar progress-bar-striped" role="progressbar"
+                            style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="processed-frames">0</span>/<span id="total-frames">0</span> 帧已处理
+                        <span id="progress-percent" class="badge bg-primary ms-2">0%</span>
+                    </div>
+                </div>
+
+                <div class="analysis-controls mt-4">
+                    <button id="play-btn" class="btn btn-success">
+                        <i class="bi bi-play-fill"></i> 播放
+                    </button>
+                    <button id="pause-btn" class="btn btn-warning ms-2">
+                        <i class="bi bi-pause-fill"></i> 暂停
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
+    $(document).ready(function () {
+        const processId = "{{ process_id }}";
+        const statusBox = $('.status-box');
+
+        if (!processId) {
+            showError('无效的任务ID');
+            return;
+        }
+
+        // 初始化视频流控制器
+        const streamer = new VideoStreamer(processId);
+
+        // 控制按钮事件
+        $('#play-btn').click(function () {
+            streamer.resume();
+            $(this).prop('disabled', true);
+            $('#pause-btn').prop('disabled', false);
+        });
+
+        $('#pause-btn').click(function () {
+            streamer.pause();
+            $(this).prop('disabled', true);
+            $('#play-btn').prop('disabled', false);
+        });
+
+        // 初始禁用暂停按钮
+        $('#pause-btn').prop('disabled', true);
+
+        function showError(message) {
+            const errorAlert = `
+        <div class="alert alert-danger alert-dismissible fade show mt-3">
+            <i class="bi bi-exclamation-triangle-fill"></i> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>`;
+            statusBox.prepend(errorAlert);
+        }
+    });
+    
     document.addEventListener('DOMContentLoaded', function () {
         const processId = "{{ process_id }}";
-        const updateProgress = () => {
-            fetch(`/progress/${processId}`)
-                .then(res => res.json())
-                .then(data => {
-                    // 更新进度条
-                    const progressBar = document.getElementById('progress-bar');
-                    progressBar.style.width = `${data.progress}%`;
-                    progressBar.textContent = `${data.progress}%`;
 
-                    // 更新统计信息
-                    const updateList = (selector, items) => {
-                        const list = document.querySelector(selector);
-                        list.innerHTML = Object.entries(items)
-                            .map(([name, count]) => `
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>${name}</span>
-                                <span class="badge bg-primary rounded-pill">${count}</span>
-                            </li>
-                        `).join('');
-                    };
+        // 仅当有processId时才初始化视频流
+        if (processId && processId !== 'None') {
+            // 添加AJAX请求头
+            $.ajaxSetup({
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
 
-                    updateList('#enter-list', data.counters.enter);
-                    updateList('#exit-list', data.counters.exit);
+            try {
+                new VideoStreamer(processId);
+            } catch (error) {
+                console.error('初始化失败:', error);
+                showError('视频流初始化失败: ' + error.message);
+            }
+        }
 
-                    // 处理完成显示结果
-                    if (data.ready) {
-                        document.getElementById('result-section').style.display = 'block';
-                    } else {
-                        setTimeout(updateProgress, 2000);
-                    }
-                });
-        };
-        updateProgress();
+        function showError(message) {
+            const errorHtml = `
+        <div class="alert alert-danger alert-dismissible fade show mt-3">
+            <i class="bi bi-exclamation-triangle"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>`;
+            $('.status-box').prepend(errorHtml);
+        }
     });
 </script>
 {% endblock %}

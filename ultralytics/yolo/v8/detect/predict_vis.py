@@ -3,7 +3,7 @@ import os
 print("当前工作目录:", os.getcwd())
 print("脚本所在目录:", os.path.dirname(__file__))
 
-import json
+
 import hydra
 import torch
 import argparse
@@ -242,38 +242,12 @@ class DetectionPredictor(BasePredictor):
         # self.args = cfg  # 确保可以访问保存参数
         self.writer = None
         self.save_dir = Path(cfg.get('project', 'output')) / cfg.get('name', 'default')
-        self.save_dir.mkdir(parents=True, exist_ok=True)  # 自动创建输出目录
-        self.vid_writer = None  # 添加视频写入器属性
-        self.vid_cap = None     # 显式声明vid_cap属性
-        self.total_frames = self._get_total_frames()
-        self.processed_frames = 0
-        self.progress_file = Path(cfg.get('project')) / cfg.get('name') / 'progress.json'
-
-    def _get_total_frames(self):
-        """获取视频总帧数"""
-        if self.args.source.endswith(('.mp4', '.avi', '.mov')):
-            cap = cv2.VideoCapture(self.args.source)
-            frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            cap.release()
-            return frames
-        return 0  # 图片模式无进度
+        self.save_dir.mkdir(parents=True, exist_ok=True)  
+        self.vid_writer = None  # 视频写入器
+        self.vid_cap = None     # 显式声明vid_cap
+        self.frame_counter = 0  # 帧计数器
+        self.last_processed_frame = 0  # 跟踪最后帧
     
-    def _save_progress(self):
-        """保存处理进度"""
-        progress = {
-            'total': self.total_frames,
-            'processed': self.processed_frames,
-            'percentage': min(99, int(self.processed_frames/self.total_frames*100)) if self.total_frames else 0,
-            'counters': {
-                'enter': dict(object_counter1),
-                'exit': dict(object_counter)
-            }
-        }
-        with open(self.progress_file, 'w') as f:
-            json.dump(progress, f)
-
-
-
     def setup_video_source(self):
         """初始化视频捕获对象"""
         if self.args.source.endswith(('.mp4', '.avi', '.mov')):
@@ -308,10 +282,6 @@ class DetectionPredictor(BasePredictor):
         return preds
 
     def write_results(self, idx, preds, batch):
-        self.processed_frames += 1
-        # 每处理5%进度保存一次
-        if self.processed_frames % max(1, self.total_frames//20) == 0:
-            self._save_progress()
         if not hasattr(self, 'vid_cap'):
             self.setup_video_source()  # 延迟初始化
 
@@ -360,9 +330,6 @@ class DetectionPredictor(BasePredictor):
             bbox_xyxy = outputs[:, :4]
             identities = outputs[:, 4]
             object_id = outputs[:, 5]
-            # print(f"Object ID类型检查: {type(object_id[0])}, 值: {object_id[0]}")
-            # print(f"Names字典内容: {self.model.names}")
-            # assert object_id[0] in self.model.names, "类别ID不合法"
             draw_boxes(im0, bbox_xyxy, self.model.names, object_id, identities)
 
         # # 实时显示处理后的帧
@@ -389,9 +356,11 @@ class DetectionPredictor(BasePredictor):
             )
             print(f"视频写入器已初始化 | 分辨率: {w}x{h} | 帧率: {fps}")
 
-        # 调试输出（处理完成后可移除）
-        #debug_frame_path = str(self.save_dir / f'debug_{self.seen:04d}.jpg')
-        #cv2.imwrite(debug_frame_path, im0)
+        # 调试
+        frame_path = self.save_dir /'frames'/f'frame_{self.seen:04d}.jpg'
+        frame_path.parent.mkdir(exist_ok=True, parents=True)
+        cv2.imwrite(str(frame_path), im0)
+        self.last_processed_frame = self.seen
 
         return log_string
     
